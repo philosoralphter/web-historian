@@ -7,7 +7,8 @@
   "dependencies": {
     "node-static": "~0.7.6",
     "qs": "~2.2.4",
-    "cron": "~1.0.5"
+    "cron": "~1.0.5",
+    "http": "0.0.0"
   },
   "devDependencies": {
     "chai": "^1.9.0",

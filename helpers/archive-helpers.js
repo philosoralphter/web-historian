@@ -60,7 +60,7 @@ exports.isURLArchived = function(url){
 exports.downloadUrls = function(url){
   request('http://' + url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      fs.writeFile(exports.paths.archivedSites + '/' + url);
+      fs.writeFile(exports.paths.archivedSites + '/' + url, body);
     }
   })
 };

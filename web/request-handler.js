@@ -1,3 +1,4 @@
+// var http = require('http');
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var fs = require('fs');
@@ -13,23 +14,19 @@ exports.handleRequest = function (req, res) {
       });
       return;
     } else if(req.method === 'POST'){
-
       req.on('data', function(data){
         var url = data.toString().split('=')[1];
         archive.addUrlToList(url);
 
         if(archive.isURLArchived('/'+url)){
-          res.statusCode = 302;
-          res.setHeader("Location", url);
+          res.writeHead(302, {"Location": '/'+url});
           res.end();
         } else {
-          res.statusCode = 302;
-          res.setHeader("Location", '/loading');
+          res.writeHead(302, {"Location": '/'+url});
           res.end();
           return;
         }
       });
-
     }
   } else if(req.url.match(/\/www./)){
     if(archive.isURLArchived(req.url)){
