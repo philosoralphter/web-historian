@@ -33,21 +33,22 @@ exports.readListOfUrls = function(callback){
   });
 };
 
-/* Doesn't do anything */
-exports.isUrlInList = function(url){
-  exports.readListOfUrls(function(err, data){
-    //if data contains url, return true
+exports.isUrlInList = function(url, callback){
+  exports.readListOfUrls(function(urlArray){
+    callback(_.contains(urlArray, url));
   });
 };
 
 exports.addUrlToList = function(url){
-  if(!exports.isUrlInList(url)){
-    fs.writeFile(exports.paths.list, url+'\n', {'encoding':'utf8'}, function(err){
-      if(err){
-        console.log('Error addUrlToList ', err);
-      }
-    });
-  }
+  exports.isUrlInList(url, function(found){
+    if(!found){
+      fs.appendFile(exports.paths.list, url+'\n', {'encoding':'utf8'}, function(err){
+        if(err){
+          console.log('Error addUrlToList ', err);
+        }
+      });
+    }
+  });
 };
 
 exports.isURLArchived = function(url){

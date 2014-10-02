@@ -14,15 +14,22 @@ exports.handleRequest = function (req, res) {
       return;
     } else if(req.method === 'POST'){
 
-      var url;
       req.on('data', function(data){
-        url = qs.parse(data).url;
+        var url = data.toString().split('=')[1];
+        archive.addUrlToList(url);
+
+        if(archive.isURLArchived('/'+url)){
+          res.statusCode = 302;
+          res.setHeader("Location", url);
+          res.end();
+        } else {
+          res.statusCode = 302;
+          res.setHeader("Location", '/loading');
+          res.end();
+          return;
+        }
       });
 
-      res.writeHead(302);
-      archive.addUrlToList(url);
-      res.end();
-      return;
     }
   } else if(req.url.match(/\/www./)){
     if(archive.isURLArchived(req.url)){
@@ -31,6 +38,18 @@ exports.handleRequest = function (req, res) {
         res.writeHead(200);
         res.end(data);
       });
+    } else {
+      res.writeHead(404);
+      res.end();
+    }
+  } else if(req.url === '/loading'){
+    if(req.method == 'GET'){
+      res.writeHead(200);
+      var path = archive.paths.siteAssets + '/loading.html';
+      fs.readFile(path, 'utf8', function(err, data){
+        res.end(data);
+      });
+      return;
     } else {
       res.writeHead(404);
       res.end();
